@@ -11,4 +11,12 @@ class Restaurant extends Model
     protected $casts = [
         'license_data' => 'array',
     ];
+
+    /**
+     * Get active license data or fallback safely to default limits
+     */
+    public function activeLicense()
+    {
+        return $this->license_data ?? \App\Services\LicenseManager::getFreeLimits();
+    }
 }
