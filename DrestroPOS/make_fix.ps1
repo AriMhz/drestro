@@ -1,0 +1,1 @@
+$content = Get-Content app_fixed.blade.php -Raw; $base64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($content)); $php = '<?php file_put_contents(''../resources/views/components/layouts/app.blade.php'', base64_decode(''' + $base64 + ''')); opcache_reset(); echo ''<h1>SUCCESS: The layout was hard-replaced and cache cleared!</h1>''; ?>'; Set-Content force_fix.php $php

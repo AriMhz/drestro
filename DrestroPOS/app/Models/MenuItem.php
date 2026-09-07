@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class MenuItem extends Model
+{
+    use \App\Traits\BelongsToRestaurant;
+
+    protected $guarded = [];
+
+    public function category()
+    {
+        return $this->belongsTo(MenuCategory::class, 'menu_category_id');
+    }
+}

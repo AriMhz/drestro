@@ -1,0 +1,418 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Client {
+  id             String   @id @default(uuid())
+  restaurantName String
+  contactNumber  String
+  location       String?
+  machineId      String?  
+  planLabel      String   @default("Premium")
+  licenseKey     String   @unique
+  status         String   @default("Active") // "Active", "Suspended", "Expired"
+  expiryDate     DateTime
+  
+  // Feature Limitations
+  tableLimit     Int?     @default(0) // 0 means unlimited
+  staffLimit     Int?     @default(0)
+  dishLimit      Int?     @default(0)
+  roomLimit      Int?     @default(0)
+
+  createdById    String?
+  updatedById    String?
+  createdBy      AdminStaff? @relation("ClientCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedBy      AdminStaff? @relation("ClientUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  lastLoginIp     String?
+  lastLoginAt     DateTime?
+  lastLoginDevice String?
+}
+
+model Hardware {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  mrp         Float?
+  imageUrl    String
+  stockStatus String   @default("In Stock") // "In Stock", "Out of Stock"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id          String   @id @default(uuid())
+  authorName  String
+  authorRole  String
+  content     String
+  rating      Int      @default(5)
+  authorInitials String
+  bgColor     String   @default("bg-red-500")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Admin RBAC & Staff Models
+
+model AdminStaff {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  password       String
+  role           String          @default("SALES") // SUPERADMIN, SALES, SUPPORT, MARKETING
+  permissions    String          @default("[]")    // JSON array of accessible routes/tabs
+  referralCode   String?         @unique           // Unique code for Marketing staff
+  commissionRate Float           @default(0.0)     // Commission percentage (e.g., 20.0)
+  location       String?                           // Location for the dealer/staff
+  
+  referrals      User[]          @relation("MarketingReferrals")
+  commissions    CommissionLog[]
+  assignedTickets SupportTicket[] @relation("TicketAssignee")
+  resolvedTickets SupportTicket[] @relation("TicketResolver")
+  updatedTickets SupportTicket[] @relation("TicketUpdater")
+  createdClients Client[]        @relation("ClientCreator")
+  updatedClients Client[]        @relation("ClientUpdater")
+  updatedSubscriptions Subscription[] @relation("SubscriptionUpdater")
+  
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  lastLoginIp     String?
+  lastLoginAt     DateTime?
+  lastLoginDevice String?
+}
+
+model CommissionLog {
+  id             String      @id @default(uuid())
+  adminStaffId   String
+  customerId     String      // The User who paid
+  amount         Float
+  status         String      @default("PENDING") // PENDING, PAID
+  
+  adminStaff     AdminStaff  @relation(fields: [adminStaffId], references: [id], onDelete: Cascade)
+  customer       User        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model SupportTicket {
+  id             String      @id @default(uuid())
+  ticketCode     String?     @unique
+  title          String
+  description    String
+  priority       String      @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  status         String      @default("OPEN")   // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  screenshotUrl  String?
+  
+  restaurantId   String
+  assignedToId   String?
+  resolvedById   String?
+  lastUpdatedById String?
+  
+  restaurant     Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  assignedTo     AdminStaff? @relation("TicketAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  resolvedBy     AdminStaff? @relation("TicketResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+  lastUpdatedBy  AdminStaff? @relation("TicketUpdater", fields: [lastUpdatedById], references: [id], onDelete: SetNull)
+  
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+// NextAuth Models
+
+model User {
+  id            String    @id @default(cuid())
+  customerCode  String?   @unique
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  phone         String?   @unique
+  image         String?
+  password      String?
+  assignedLocation String?
+  accounts      Account[]
+  sessions      Session[]
+  restaurants   Restaurant[] // A user can manage multiple restaurants
+  subscriptionPayments SubscriptionPayment[]
+ 
+  referredById  String?
+  referredBy    AdminStaff? @relation("MarketingReferrals", fields: [referredById], references: [id])
+  commissionsPaid CommissionLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lastLoginIp     String?
+  lastLoginAt     DateTime?
+  lastLoginDevice String?
+}
+
+// SaaS Tenant Models
+
+model Restaurant {
+  id            String         @id @default(uuid())
+  userId        String         // The Superadmin owner
+  name          String
+  phone         String
+  address       String?
+  type          String         @default("Restaurant") // Cafe, Bar, Cloud Kitchen, etc.
+  
+  // Settings-related synced fields
+  tagline              String?
+  ward                 String?
+  city                 String?
+  email                String?
+  password             String?
+  currency             String?        @default("Rs.")
+  panNumber            String?
+  taxPercent           Float?         @default(0)
+  serviceChargePercent Float?         @default(0)
+  dateCalendarType     String?        @default("AD")
+
+  // A generated key they can use for the offline Windows POS
+  offlineLicenseKey String?    @unique
+
+  // Feature ON/OFF Switches (Admin Controlled)
+  featureHotel        Boolean?       @default(false)
+  featureInventory    Boolean?       @default(true)
+  featureReports      Boolean?       @default(true)
+  featureDaybook      Boolean?       @default(true)
+  featureEbilling     Boolean?       @default(false)
+  featureMultiUser    Boolean?       @default(true)
+  featureKotBot       Boolean?       @default(true)
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptions Subscription[]
+  subscriptionPayments SubscriptionPayment[]
+  supportTickets SupportTicket[]
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Subscription {
+  id           String     @id @default(uuid())
+  restaurantId String
+  planId       String     @default("premium_trial")
+  status       String     @default("trialing") // trialing, active, past_due, canceled
+  trialEndsAt  DateTime?
+  currentPeriodEnd DateTime?
+  
+  // Feature Limitations
+  tableLimit     Int?     @default(0) // 0 means unlimited
+  staffLimit     Int?     @default(0)
+  dishLimit      Int?     @default(0)
+  roomLimit      Int?     @default(0)
+  allowedMenus   String?  @default("pos,menu,tables,kot,reports,expenses,staff,inventory,customers,settings")
+  
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  
+  updatedById  String?
+  updatedBy    AdminStaff? @relation("SubscriptionUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+ 
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+}
+ 
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@unique([identifier, token])
+}
+
+// Editable Combos Models
+
+model ComboPackage {
+  id            String         @id @default(uuid())
+  name          String
+  subtitle      String
+  price         Int
+  originalPrice Int
+  savings       Int
+  isPopular     Boolean        @default(false)
+  planId        String?
+  features      ComboFeature[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model ComboFeature {
+  id             String       @id @default(uuid())
+  comboPackageId String
+  text           String
+  iconName       String       @default("check")
+  comboPackage   ComboPackage @relation(fields: [comboPackageId], references: [id], onDelete: Cascade)
+}
+
+// Pricing Plans Models
+
+model Plan {
+  id                 String            @id @default(uuid())
+  name               String
+  description        String
+  priceYearly        Int
+  priceHalfYearly    Int
+  oldPriceYearly     Int?
+  oldPriceHalfYearly Int?
+  isPopular          Boolean           @default(false)
+  buttonText         String            @default("Start 14 Days Trial")
+  buttonVariant      String            @default("outline") // "primary" or "outline"
+  
+  features           PlanFeature[]
+  notIncluded        PlanNotIncluded[]
+  
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
+
+model PlanFeature {
+  id       String @id @default(uuid())
+  planId   String
+  text     String
+  plan     Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+}
+
+model PlanNotIncluded {
+  id       String @id @default(uuid())
+  planId   String
+  text     String
+  plan     Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+}
+
+// Global Site Settings (Used for the massive Comparison Table JSON)
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   // Stores JSON string
+  updatedAt DateTime @updatedAt
+}
+
+// FAQ Model
+model Faq {
+  id        String   @id @default(uuid())
+  question  String
+  answer    String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ClientLogo {
+  id        String   @id @default(uuid())
+  url       String
+  name      String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model ContactSubmission {
+  id             String   @id @default(uuid())
+  submissionCode String?  @unique
+  name           String
+  email          String
+  phone     String?
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HardwareOrder {
+  id         String   @id @default(uuid())
+  fullName   String
+  email      String?
+  phone      String
+  address    String
+  customerPan String?
+  items      String   // JSON string of items: Array<{ id, name, price, quantity, image }>
+  discount   Float    @default(0)
+  totalPrice Float
+  status     String   @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  
+  // Nepal E-Billing Fields
+  nepalEbillingSynced    Boolean  @default(false)
+  nepalEbillingInvoiceId String?
+  nepalEbillingError     String?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model CareerPost {
+  id           String   @id @default(uuid())
+  title        String
+  department   String   @default("Engineering")
+  type         String   @default("Full-time")
+  location     String   @default("Kathmandu, Nepal")
+  salary       String?
+  experience   String?
+  description  String
+  requirements String
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SubscriptionPayment {
+  id             String   @id @default(uuid())
+  paymentCode    String?  @unique
+  userId         String
+  restaurantId   String
+  restaurantName String
+  planId         String
+  billingCycle   String
+  amount         Float
+  paymentMethod  String
+  screenshotUrl  String?
+  status         String   @default("COMPLETED")
+  createdAt      DateTime @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+}

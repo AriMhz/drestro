@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+DrestroPOS/vendor/
+DrestroPOS/node_modules/
+
+# Next.js Build
+.next/
+out/
+build/
+dist/
+coverage/
+
+# Laravel Storage & Cache
+DrestroPOS/storage/*.key
+DrestroPOS/storage/framework/cache/data/*
+DrestroPOS/storage/framework/sessions/*
+DrestroPOS/storage/framework/views/*
+DrestroPOS/storage/logs/*
+!DrestroPOS/storage/framework/cache/data/.gitignore
+!DrestroPOS/storage/framework/sessions/.gitignore
+!DrestroPOS/storage/framework/views/.gitignore
+!DrestroPOS/storage/logs/.gitignore
+DrestroPOS/public/storage
+DrestroPOS/public/hot
+DrestroPOS/public/build
+
+# Database files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+prisma/*.db
+prisma/*.sqlite
+DrestroPOS/database/*.sqlite
+
+# Environment & Sensitive Files
+.env
+.env*.local
+.env.production
+.env.staging
+DrestroPOS/.env
+DrestroPOS/.env.backup
+DrestroPOS/.env.production
+user_cookie.txt
+cookie.txt
+drestro-portal
+
+# Binary / Archive / Zip files
+*.zip
+composer.phar
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+
+# Generated
+/src/generated/prisma
+tsconfig.tsbuildinfo

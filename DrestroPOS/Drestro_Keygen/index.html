@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drestro License Key Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 640px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #34d399;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .card-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+
+        label.field {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 0.35rem;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 0.6rem 0.9rem;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            border-color: #34d399;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 0.75rem;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .feature-item:hover {
+            border-color: #475569;
+        }
+
+        .feature-item.selected {
+            border-color: #34d399;
+            background: #34d39910;
+        }
+
+        .feature-item input[type="checkbox"] {
+            accent-color: #34d399;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .feature-item span {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .feature-item .emoji {
+            font-size: 1rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.85rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px #10b98140;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .output-area {
+            margin-top: 1.25rem;
+        }
+
+        .output-area textarea {
+            width: 100%;
+            height: 100px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            color: #34d399;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            padding: 0.75rem;
+            resize: none;
+            outline: none;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #334155;
+            border: none;
+            border-radius: 0.5rem;
+            color: #e2e8f0;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #475569;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            background: #10b98120;
+            color: #34d399;
+            border-radius: 0.25rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 0.5rem;
+        }
+
+        .warning {
+            background: #f59e0b15;
+            border: 1px solid #f59e0b40;
+            color: #fbbf24;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .select-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .select-controls button {
+            padding: 0.3rem 0.6rem;
+            background: #334155;
+            border: none;
+            color: #94a3b8;
+            border-radius: 0.35rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .select-controls button:hover {
+            background: #475569;
+            color: #e2e8f0;
+        }
+
+        /* Login Screen Styles */
+        #loginOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.4s ease, visibility 0.4s;
+        }
+
+        #loginOverlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .login-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-card h2 {
+            font-size: 1.5rem;
+            color: #34d399;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-card p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .login-input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .login-input-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .login-input-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .login-input-group input:focus {
+            outline: none;
+            border-color: #34d399;
+            box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.2);
+        }
+
+        #loginError {
+            color: #f87171;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .container.blur {
+            filter: blur(10px);
+            pointer-events: none;
+        }
+
+        /* Logout button */
+        .logout-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.8rem;
+            background: #334155;
+            border: none;
+            color: #94a3b8;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Overlay -->
+    <div id="loginOverlay">
+        <div class="login-card">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔐</div>
+            <h2>Admin Login</h2>
+            <p>Access restricted to authorized personnel only.</p>
+
+            <div class="login-input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="••••••••"
+                    onkeypress="if(event.key === 'Enter') login()">
+            </div>
+
+            <button class="btn btn-primary" onclick="login()">Unlock Generator</button>
+            <div id="loginError">Invalid password. Please try again.</div>
+        </div>
+    </div>
+
+    <div class="container blur" id="mainContainer">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        <div class="header">
+            <h1>🔑 Drestro Keygen</h1>
+            <p>Generate license keys with custom feature access for each client</p>
+        </div>
+
+        <!-- Client Info -->
+        <div class="card">
+            <div class="card-title">Client Information</div>
+            <div class="row" style="grid-template-columns: 1fr;">
+                <div>
+                    <label class="field">Client Name / Business Name</label>
+                    <input type="text" id="clientName" placeholder="e.g. Himalayan Kitchen">
+                </div>
+                <div>
+                    <label class="field">Client's Machine ID (from their License page)</label>
+                    <input type="text" id="machineId" placeholder="Paste the Machine ID from the client's PC here"
+                        value="">
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <label class="field">License Duration</label>
+                    <select id="duration">
+                        <option value="14">14 Days (Free Trial)</option>
+                        <option value="30">1 Month</option>
+                        <option value="90">3 Months</option>
+                        <option value="180">6 Months</option>
+                        <option value="365" selected>1 Year</option>
+                        <option value="730">2 Years</option>
+                        <option value="36500">Lifetime (100 Years)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="field">Plan Label <span class="badge">display only</span></label>
+                    <select id="planLabel">
+                        <option value="Free Trial">Free Trial</option>
+                        <option value="Basic">Basic</option>
+                        <option value="Standard">Standard</option>
+                        <option value="Premium" selected>Premium</option>
+                        <option value="Enterprise">Enterprise</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Selection -->
+        <div class="card" style="display: none;">
+            <div class="card-title">Features to Grant</div>
+            <div class="select-controls">
+                <button onclick="selectAll()">Select All</button>
+                <button onclick="deselectAll()">Deselect All</button>
+                <button onclick="selectTrial()">Free Trial Preset</button>
+                <button onclick="selectBasic()">Basic Preset</button>
+                <button onclick="selectPremium()">Premium Preset</button>
+            </div>
+            <div class="features-grid">
+                <!-- Restaurant Core -->
+                <label class="feature-item">
+                    <input type="checkbox" value="menu_manager">
+                    <span class="emoji">🍽️</span><span>Menu Manager</span>
+                </label>
+                <label class="feature-item">
+                    <input type="checkbox" value="restaurant_tables">
+                    <span class="emoji">🪑</span><span>Restaurant Tables</span>
+                </label>
+                <!-- Hotel Core -->
+                <label class="feature-item">
+                    <input type="checkbox" value="hotel_room_manager">
+                    <span class="emoji">🏨</span><span>Hotel Room Manager</span>
+                </label>
+                <!-- Existing Features -->
+                <label class="feature-item selected">
+                    <input type="checkbox" value="take_order" checked>
+                    <span class="emoji">📝</span><span>Take Order</span>
+                </label>
+                <label class="feature-item">
+                    <input type="checkbox" value="take_room_service">
+                    <span class="emoji">🛏️</span><span>Take Room Service</span>
+                </label>
+                <label class="feature-item selected">
+                    <input type="checkbox" value="cashier" checked>
+                    <span class="emoji">💰</span><span>Cashier Panel</span>
+                </label>
+                <label class="feature-item">
+                    <input type="checkbox" value="hotel_reception">
+                    <span class="emoji">🛎️</span><span>Hotel Reception Cashier</span>
+                </label>
+                <label class="feature-item selected">
+                    <input type="checkbox" value="kitchen_display" checked>
+                    <span class="emoji">🔥</span><span>Kitchen Display</span>
+                </label>
+                <label class="feature-item">
+                    <input type="checkbox" value="waiter_dashboard">
+                    <span class="emoji">🧑‍🍳</span><span>Waiter Dashboard</span>
+                </label>
+                <label class="feature-item">
+                    <input type="checkbox" value="bar_display">
+                    <span class="emoji">🍸</span><span>Bar Display</span>
+                </label>
+                <label class="feature-item">
+                    <input type="checkbox" value="inventory">
+                    <span class="emoji">📦</span><span>Inventory</span>
+                </label>
+                <label class="feature-item">
+                    <input type="checkbox" value="reports">
+                    <span class="emoji">📊</span><span>Reports & Analytics</span>
+                </label>
+                <label class="feature-item">
+                    <input type="checkbox" value="qr_menu">
+                    <span class="emoji">📱</span><span>Digital QR Menu</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Generate -->
+        <button class="btn btn-primary" onclick="generateKey()">Generate License Key</button>
+
+        <div class="output-area" id="outputArea" style="display:none;">
+            <div class="card">
+                <div class="card-title">Generated License Key</div>
+                <textarea id="keyOutput" readonly></textarea>
+                <button class="copy-btn" onclick="copyKey()">📋 Copy to Clipboard</button>
+                <div class="warning">⚠️ Keep this tool SECRET. Never share it or the source code with clients. The
+                    Secret Key is embedded in both this tool and the POS software.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SECRET_KEY = 'DrestroPOS_Secure_Key_2026_X9P2';
+        // SHA-256 hash of 'admin123'
+        const ADMIN_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
+
+        // Check login on load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem('keygen_auth') === 'true') {
+                showGenerator();
+            }
+        });
+
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function login() {
+            const passwordInput = document.getElementById('password');
+            const errorDiv = document.getElementById('loginError');
+            const password = passwordInput.value;
+
+            const hashed = await hashPassword(password);
+
+            if (hashed === ADMIN_HASH) {
+                sessionStorage.setItem('keygen_auth', 'true');
+                showGenerator();
+                passwordInput.value = '';
+                errorDiv.style.display = 'none';
+            } else {
+                errorDiv.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+
+                // Shake animation
+                const card = document.querySelector('.login-card');
+                card.style.animation = 'none';
+                card.offsetHeight; // trigger reflow
+                card.style.animation = 'shake 0.4s ease-in-out';
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('keygen_auth');
+            location.reload();
+        }
+
+        function showGenerator() {
+            document.getElementById('loginOverlay').classList.add('hidden');
+            document.getElementById('mainContainer').classList.remove('blur');
+        }
+
+        // Add shake animation to CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Toggle visual selection on checkboxes
+        document.querySelectorAll('.feature-item input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', function () {
+                this.closest('.feature-item').classList.toggle('selected', this.checked);
+            });
+        });
+
+        function getCheckedFeatures() {
+            return Array.from(document.querySelectorAll('.feature-item input:checked')).map(cb => cb.value);
+        }
+
+        function setFeatures(featureList) {
+            document.querySelectorAll('.feature-item input[type="checkbox"]').forEach(cb => {
+                cb.checked = featureList.includes(cb.value);
+                cb.closest('.feature-item').classList.toggle('selected', cb.checked);
+            });
+        }
+
+        function selectAll() {
+            document.querySelectorAll('.feature-item input[type="checkbox"]').forEach(cb => {
+                cb.checked = true;
+                cb.closest('.feature-item').classList.add('selected');
+            });
+        }
+        function deselectAll() {
+            document.querySelectorAll('.feature-item input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+                cb.closest('.feature-item').classList.remove('selected');
+            });
+        }
+        function selectTrial() {
+            selectAll();
+            document.getElementById('planLabel').value = 'Free Trial';
+            document.getElementById('duration').value = '14';
+        }
+        function selectBasic() {
+            setFeatures(['menu_manager', 'restaurant_tables', 'take_order', 'cashier', 'kitchen_display']);
+            document.getElementById('planLabel').value = 'Basic';
+        }
+        function selectPremium() {
+            setFeatures([
+                'menu_manager', 'restaurant_tables', 'hotel_room_manager',
+                'take_order', 'take_room_service', 'cashier', 'hotel_reception',
+                'kitchen_display', 'waiter_dashboard', 'bar_display',
+                'inventory', 'reports', 'qr_menu'
+            ]);
+            document.getElementById('planLabel').value = 'Premium';
+        }
+
+        // HMAC-SHA256 implementation (Web Crypto API)
+        async function hmacSHA256(key, message) {
+            const encoder = new TextEncoder();
+            const cryptoKey = await crypto.subtle.importKey(
+                'raw', encoder.encode(key), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+            );
+            const signature = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(message));
+            return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function generateKey() {
+            const clientName = document.getElementById('clientName').value.trim();
+            const machineId = document.getElementById('machineId').value.trim();
+            const duration = parseInt(document.getElementById('duration').value);
+            const planLabel = document.getElementById('planLabel').value;
+            const features = getCheckedFeatures();
+
+            if (features.length === 0) {
+                alert('Please select at least one feature.');
+                return;
+            }
+
+            // Build expiry date
+            const now = new Date();
+            const expiry = new Date(now.getTime() + duration * 24 * 60 * 60 * 1000);
+
+            const payload = {
+                client: clientName || 'Unnamed Client',
+                plan: planLabel,
+                machine_id: machineId,
+                features: features,
+                issued_at: now.toISOString().split('T')[0],
+                expires_at: expiry.toISOString().split('T')[0]
+            };
+
+            const payloadJson = JSON.stringify(payload);
+            const payloadBase64 = btoa(payloadJson);
+
+            // Sign it
+            const signature = await hmacSHA256(SECRET_KEY, payloadBase64);
+
+            const licenseKey = payloadBase64 + '.' + signature;
+
+            document.getElementById('keyOutput').value = licenseKey;
+            document.getElementById('outputArea').style.display = 'block';
+            document.getElementById('keyOutput').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyKey() {
+            const textarea = document.getElementById('keyOutput');
+            textarea.select();
+            document.execCommand('copy');
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = '✅ Copied!';
+            setTimeout(() => btn.textContent = '📋 Copy to Clipboard', 2000);
+        }
+    </script>
+</body>
+
+</html>
