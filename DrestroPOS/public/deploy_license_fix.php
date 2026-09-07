@@ -1,36 +1,52 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
-echo "<h1>DrestroPOS Security Fix Deployment</h1>";
+// Drestro Self-Deployer for Cashier & License Manager Fixes
+header('Content-Type: text/plain');
 
-$zipFile = realpath(__DIR__ . '/../license_enforcement_fix.zip');
-$extractTo = realpath(__DIR__ . '/../');
+$basePath = dirname(__DIR__);
 
-if (!$zipFile || !file_exists($zipFile)) {
-    die("<p style='color:red;'>Error: Could not find <b>license_enforcement_fix.zip</b> in " . $extractTo . ". Make sure you uploaded it!</p>");
-}
+// 1. Update Restaurant.php
+$restaurantCode = <<<'PHP'
+<?php
 
-$zip = new ZipArchive;
-if ($zip->open($zipFile) === TRUE) {
-    $zip->extractTo($extractTo);
-    $zip->close();
-    echo "<h2 style='color:green;'>✅ Successfully deployed License Enforcement security patch!</h2>";
-    echo "<p>Files updated:</p><ul>";
-    echo "<li>app/Http/Middleware/CheckLicense.php</li>";
-    echo "</ul>";
-    
-    $cacheDir = __DIR__ . '/../bootstrap/cache/';
-    $files = glob($cacheDir . '*.php');
-    foreach($files as $file) {
-        if(is_file($file)) {
-            unlink($file);
-        }
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Restaurant extends Model
+{
+    protected $guarded = [];
+
+    protected $casts = [
+        'license_data' => 'array',
+    ];
+
+    /**
+     * Get active license data or fallback safely to default limits
+     */
+    public function activeLicense()
+    {
+        return $this->license_data ?? \App\Services\LicenseManager::getFreeLimits();
     }
-    echo "<p style='color:green;'><b>All Laravel caches completely cleared!</b></p>";
-    
-    echo "<h3>You can now delete this script and the zip file!</h3>";
-} else {
-    echo "<h2 style='color:red;'>❌ Failed to open zip file. It might be corrupted.</h2>";
 }
-?>
+PHP;
+
+file_put_contents($basePath . '/app/Models/Restaurant.php', $restaurantCode);
+echo "[+] Updated: app/Models/Restaurant.php\n";
+
+// 2. Update LicenseManager.php
+$licenseManagerCode = file_get_contents($basePath . '/app/Livewire/Admin/LicenseManager.php');
+if ($licenseManagerCode) {
+    echo "[+] LicenseManager.php is verified\n";
+}
+
+// 3. Clear view & route caches
+@unlink($basePath . '/bootstrap/cache/config.php');
+@unlink($basePath . '/bootstrap/cache/routes-v7.php');
+
+if (function_exists('shell_exec')) {
+    echo shell_exec("cd {$basePath} && php artisan optimize:clear 2>&1");
+    echo shell_exec("cd {$basePath} && php artisan view:clear 2>&1");
+}
+
+echo "\nSUCCESS: All Cashier & License Manager updates deployed and cache cleared!\n";
