@@ -41,13 +41,25 @@ DrestroPOS/database/*.sqlite
 DrestroPOS/.env
 DrestroPOS/.env.backup
 DrestroPOS/.env.production
-user_cookie.txt
+user_cookie*.txt
 cookie.txt
 drestro-portal
 
 # Binary / Archive / Zip files
 *.zip
 composer.phar
+
+# Scratch & Temporary Scripts
+make_*.py
+deploy_*.php
+*.cjs
+check_*.mjs
+delete_staff.mjs
+scratch*
+metadata.json
+out.css
+app_blade_temp.txt
+missing.txt
 
 # Logs and OS files
 *.log
